@@ -13,43 +13,42 @@
 #include  <iostream>
 #include <ctime>
 
-const int mWidth = 1024;
-const int mHeight = 1024;
+int windowWidth = 1024;
+int windowHeight = 1024;
 
 int main(int argc, char** argv) 
 {
 	bool quit = false;
 
-	InputHandler inputHandler;
-	Renderer renderer;
+	Renderer renderer(windowWidth, windowHeight);
+	InputHandler inputHandler(renderer, renderer.camera);
 
 	int frameCount = 0;
 
 	//Screen texture example
-	/*
-	renderer.renderType = renderer.ScreenTexture;
+	/*renderer.renderType = renderer.ScreenTexture;
 	renderer.init();
 
-	std::vector<unsigned char> bitmap(1024 * 1024 * 3);
+	std::vector<unsigned char> bitmap(windowWidth * windowHeight * 3);
 
-	for (size_t i = 0; i < bitmap.size(); i += 3)
+	for (size_t i = 0; i < bitmap.size(); i += 3) //Filling the bitmap with red
 	{
 		bitmap[i] = 100;
 		bitmap[i + 1] = 0;
 		bitmap[i + 2] = 0;
 	}
 
-	renderer.updateScreenTexture(&bitmap[0], 1024, 1024);*/
+	renderer.updateScreenTexture(&bitmap[0], windowWidth, windowHeight);*/
 
 	//3D Mesh example
 	renderer.renderType = renderer.Geometry;
 	renderer.init();
 
-	std::vector<float> headVertices = FileHandler::loadObj("teapot.obj");
-	Mesh head = Mesh(Vec3i{ 0, 0, 0 }, headVertices);
+	std::vector<float> teapotVertices = FileHandler::loadObj("teapot.obj");
+	Mesh teapot = Mesh(Vec3i{ 0, 0, 0 }, teapotVertices);
 
 	std::vector<Mesh> meshes = std::vector<Mesh>();
-	meshes.push_back(head);
+	meshes.push_back(teapot);
 
 	renderer.loadVBOs(meshes);
 
@@ -68,7 +67,7 @@ int main(int argc, char** argv)
 		{
 			quit = true;
 		}
-		inputHandler.handleInput(renderer.camera, renderer.deltaTime);
+		inputHandler.handleInput(renderer.deltaTime);
 		renderer.updateDeltatime();
 	}
 

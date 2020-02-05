@@ -2,7 +2,7 @@
 
 int count = 0;
 
-void InputHandler::handleInput(Camera &camera, float deltaTime)
+void InputHandler::handleInput(float deltaTime)
 {
 	camera.cameraStep = 0.05f * deltaTime;
 	float xOffset, yOffset;
@@ -28,46 +28,62 @@ void InputHandler::handleInput(Camera &camera, float deltaTime)
 			case SDLK_LCTRL:
 				camera.moveDown();
 				break;
-			case SDLK_F9:
+			case SDLK_p: //Print camera position
 				std::cout << "x: " << camera.getPosition().x << " y: " << camera.getPosition().y << " z: " << camera.getPosition().z << "\n";
 				break;
-				
-			case SDLK_F10:
-				currentImage = count % 3;
-				count++;
+
+			case SDLK_F11: //Fullscreen toggle
+				renderer.toggleFullscreen();
 				break;
-				
+
 			case SDLK_ESCAPE:
 				windowContext = !windowContext;
 				if (windowContext) {
 					SDL_ShowCursor(0);
 					SDL_SetRelativeMouseMode(SDL_TRUE);
+					int relativeX, relativeY; //Skip the next relative mouse event, as the mouse has moved around during unfocus
+					SDL_GetRelativeMouseState(&relativeX, &relativeY);
 				}
 				else {
 					SDL_ShowCursor(1);
 					SDL_SetRelativeMouseMode(SDL_FALSE);
 				}
 				break;
-			case SDLK_c:
+			case SDLK_c: //Exiting program
 				exit = true;
 				break;
 			}
 			break;
 		case SDL_MOUSEMOTION:
-			int relativeX, relativeY;
-			SDL_GetRelativeMouseState(&relativeX, &relativeY);
+			if (windowContext) //Mouse only moves camera when the window is in focus, ie the mouse is invisible
+			{
+				int relativeX, relativeY;
+				SDL_GetRelativeMouseState(&relativeX, &relativeY);
 
-			camera.updateView(relativeX * sensitivity, -relativeY * sensitivity);
+				camera.updateView(relativeX * sensitivity, -relativeY * sensitivity);
+			}
+			break;
+		case SDL_WINDOWEVENT:
+			switch (sdlEvent.window.event) {
+			case SDL_WINDOWEVENT_RESIZED:
+				renderer.resizeWindow(sdlEvent.window.data1, sdlEvent.window.data2);
+				printf("Window size changed to %dx%d \n",
+					sdlEvent.window.data1,
+					sdlEvent.window.data2);
+				break;
+			case SDL_WINDOWEVENT_CLOSE: //Exiting program
+				exit = true;
+				break;
+			}
 			break;
 		}
 	}
 }
 
-InputHandler::InputHandler()
+InputHandler::InputHandler(Renderer& _renderer, Camera& _camera) : camera(_camera), renderer(_renderer)
 {
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 }
-
 
 InputHandler::~InputHandler()
 {

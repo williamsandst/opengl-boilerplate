@@ -1,6 +1,8 @@
 #pragma once
 #include "Camera.h"
+#include "Renderer.h"
 #include "SDL.h"
+
 class InputHandler
 {
 private:
@@ -10,10 +12,12 @@ public:
 	bool exit = false;
 	bool windowContext = true;
 
-	int currentImage;
+	Camera& camera;
+	Renderer& renderer;
 
-	void handleInput(Camera &camera, float deltaTime);
-	InputHandler();
+	void handleInput(float deltaTime);
+
+	InputHandler(Renderer& _renderer, Camera& _camera);
 	~InputHandler();
 };
 

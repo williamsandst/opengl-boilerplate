@@ -1,5 +1,11 @@
 #include "Renderer.h"
 
+Renderer::Renderer(int windowWidth, int windowHeight)
+{
+	this->windowWidth = windowWidth;
+	this->windowHeight = windowHeight;
+}
+
 Renderer::Renderer()
 {
 }
@@ -20,8 +26,6 @@ void Renderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	camera.calculateProjectionMatrix();
 	camera.calculateViewMatrix();
-
-	glActiveTexture(GL_TEXTURE0);
 
 	switch (renderType)
 	{
@@ -47,13 +51,9 @@ void Renderer::drawGeometry()
 	}
 }
 
-void Renderer::initGeometry()
-{
-	geometryShader = Shader("shaders/geometry.vert", "shaders/geometry.frag");
-}
-
 void Renderer::drawScreenTexture()
 {
+	glActiveTexture(GL_TEXTURE0);
 	screenTextureShader.use();
 }
 
@@ -96,10 +96,10 @@ void Renderer::initSDL()
 
 	SDL_DisplayMode DM;
 	SDL_GetCurrentDisplayMode(0, &DM);
-	screenHeight = DM.h;
-	screenWidth = DM.w;
+	screenResHeight = DM.h;
+	screenResWidth = DM.w;
 
-	window = SDL_CreateWindow(windowTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow(windowTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	glContext = SDL_GL_CreateContext(window);
 
 	SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -111,23 +111,9 @@ void Renderer::initSDL()
 	SDL_GL_SetSwapInterval(1);
 }
 
-void Renderer::resizeWindow(int width, int height)
+void Renderer::initGeometry()
 {
-	SDL_SetWindowSize(window, width, height);
-	int newScreenPosX = screenWidth / 2 - width / 2;
-	int newScreenPosY = screenHeight / 2 - height / 2; 
-	SDL_SetWindowPosition(window, newScreenPosX, newScreenPosY);
-}
-
-//Update the covering screen texture with a new texture
-void Renderer::updateScreenTexture(unsigned char* bytearray, int width, int height) 
-{
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, bytearray);
-
-	int newWidth = (width / (float)height) * 512;
-	resizeWindow(newWidth, 512);
-
+	geometryShader = Shader("shaders/geometry.vert", "shaders/geometry.frag");
 }
 
 void Renderer::initScreenTexture()
@@ -144,15 +130,78 @@ void Renderer::initScreenTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
-void Renderer::close()
-{
-	SDL_Quit();
-}
-
 void Renderer::loadVBOs(std::vector<Mesh>& meshes)
 {
 	for (auto &mesh : meshes)
 	{
 		geometryVBOs.push_back(GeometryVBO(mesh.pos, mesh.vertices));
 	}
+}
+
+void Renderer::toggleFullscreen() {
+
+	isFullscreen = !isFullscreen;
+
+	if (isFullscreen)
+	{
+		minimizedWidth = windowWidth;
+		minimizedHeight = windowHeight;
+		SDL_SetWindowSize(window, screenResWidth, screenResHeight);
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		windowWidth = screenResWidth;
+		windowHeight = screenResHeight;
+
+	}
+	else
+	{
+		SDL_SetWindowFullscreen(window, 0);
+		SDL_SetWindowSize(window, minimizedWidth, minimizedHeight);
+		windowWidth = minimizedWidth;
+		windowHeight = minimizedHeight;
+	}
+
+	updateResolution();
+}
+
+void Renderer::updateResolution()
+{
+
+	glViewport(0, 0, windowWidth, windowHeight);
+
+	camera.windowWidth = windowWidth;
+	camera.windowHeight = windowHeight;
+
+	render();
+
+}
+
+void Renderer::resizeWindow(int width, int height)
+{
+	windowWidth = width;
+	windowHeight = height;
+	updateResolution();
+}
+
+void Renderer::centerWindow()
+{
+	int newScreenPosX = screenResWidth / 2 - windowWidth / 2;
+	int newScreenPosY = screenResHeight / 2 - windowHeight / 2;
+	SDL_SetWindowPosition(window, newScreenPosX, newScreenPosY);
+}
+
+//Update the covering screen texture with a new texture
+void Renderer::updateScreenTexture(unsigned char* bytearray, int width, int height)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, bytearray);
+
+	int newWidth = (width / (float)height) * windowHeight;
+	resizeWindow(newWidth, windowHeight);
+	centerWindow();
+
+}
+
+void Renderer::close()
+{
+	SDL_Quit();
 }

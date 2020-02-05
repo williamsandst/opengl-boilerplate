@@ -19,8 +19,9 @@
 class Renderer {
 public:
 	const char* windowTitle = "C++ OpenGL Boilerplate";
-    const int windowWidth = 1024, windowHeight = 1024;
-	int screenHeight, screenWidth;
+    int windowWidth = 1024, windowHeight = 1024;
+	int screenResHeight, screenResWidth;
+	bool isFullscreen = false;
 
 	enum RenderType {ScreenTexture, Geometry};
 	RenderType renderType = ScreenTexture;
@@ -28,30 +29,27 @@ public:
     float deltaTime = 0.0f;
     Camera camera;
 
+	Renderer(int windowWidth, int windowHeight);
+
     Renderer();
 
     ~Renderer();
 
     void updateDeltatime();
 
+	void init();
+
     void render();
-
-	void drawGeometry();
-
-	void initGeometry();
-
-	//Functions related to drawing a screen texture from a byte array
-	void drawScreenTexture();
-
-    void updateScreenTexture(unsigned char *byteArray, int width = 1024, int height = 1024);
-
-    void initScreenTexture();
-
-    void init();
 
     void close();
 
+	void updateScreenTexture(unsigned char* byteArray, int width = 1024, int height = 1024);
+
 	void loadVBOs(std::vector<Mesh>& meshes);
+
+	void toggleFullscreen();
+
+	void resizeWindow(int width, int height);
 
 private:
     Shader screenTextureShader, geometryShader;
@@ -61,11 +59,24 @@ private:
     SDL_GLContext glContext;
     unsigned int VAO, VBO, texture;
     float lastFrame = 0.0f;
+	int minimizedWidth = 1280, minimizedHeight = 720;
 
     void initOpenGL();
 
     void initSDL();
 
-	void resizeWindow(int width, int height);
+	void initGeometry();
+
+	void initScreenTexture();
+
+	//Functions related to drawing 3D objects through rasterizing
+	void drawGeometry();
+
+	//Functions related to drawing a screen texture from a byte array
+	void drawScreenTexture();
+
+	void centerWindow();
+
+	void updateResolution();
 };
 
