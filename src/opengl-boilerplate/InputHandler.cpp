@@ -6,30 +6,40 @@ void InputHandler::handleInput(float deltaTime)
 {
 	camera.cameraStep = 0.05f * deltaTime;
 	float xOffset, yOffset;
-	while (SDL_PollEvent(&sdlEvent) != 0) {
+
+	while (SDL_PollEvent(&sdlEvent) != 0 && sdlEvent.key.repeat == 0) {
 		switch (sdlEvent.type) {
 		case SDL_KEYDOWN:
 			switch (sdlEvent.key.keysym.sym) {
 			case SDLK_w:
-				camera.moveForward();
+				camera.keyForward = true;
 				break;
 			case SDLK_s:
-				camera.moveBack();
+				camera.keyBackward = true;
 				break;
 			case SDLK_a:
-				camera.moveLeft();
+				camera.keyLeft = true;
 				break;
 			case SDLK_d:
-				camera.moveRight();
+				camera.keyRight = true;
 				break;
 			case SDLK_SPACE:
-				camera.moveUp();
+				camera.keyUp = true;
 				break;
 			case SDLK_LCTRL:
-				camera.moveDown();
+				camera.keyDown = true;
 				break;
-			case SDLK_p: //Print camera position
-				std::cout << "x: " << camera.getPosition().x << " y: " << camera.getPosition().y << " z: " << camera.getPosition().z << "\n";
+
+			case SDLK_z:
+				camera.changeMaxVelocity(2);
+				std::cout << "Max speed: " << camera.maxVelocity << "\n";
+				break;
+			case SDLK_x:
+				camera.changeMaxVelocity(0.5);
+				std::cout << "Max speed: " << camera.maxVelocity << "\n";
+				break;
+			case SDLK_F9:
+				std::cout << "Camera pos: x: " << camera.getPosition().x << " y: " << camera.getPosition().y << " z: " << camera.getPosition().z << "\n";
 				break;
 
 			case SDLK_F11: //Fullscreen toggle
@@ -54,6 +64,27 @@ void InputHandler::handleInput(float deltaTime)
 				break;
 			}
 			break;
+		case SDL_KEYUP:
+			switch (sdlEvent.key.keysym.sym) {
+			case SDLK_w:
+				camera.keyForward = false;
+				break;
+			case SDLK_s:
+				camera.keyBackward = false;
+				break;
+			case SDLK_a:
+				camera.keyLeft = false;
+				break;
+			case SDLK_d:
+				camera.keyRight = false;
+				break;
+			case SDLK_SPACE:
+				camera.keyUp = false;
+				break;
+			case SDLK_LCTRL:
+				camera.keyDown = false;
+				break;
+			}
 		case SDL_MOUSEMOTION:
 			if (windowContext) //Mouse only moves camera when the window is in focus, ie the mouse is invisible
 			{
@@ -78,6 +109,9 @@ void InputHandler::handleInput(float deltaTime)
 			break;
 		}
 	}
+
+	camera.move();
+
 }
 
 InputHandler::InputHandler(Renderer& _renderer, Camera& _camera) : camera(_camera), renderer(_renderer)
