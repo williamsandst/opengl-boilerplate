@@ -68,8 +68,7 @@ set(INCS
     ${SDL2_INCLUDE_DIRS}
     ${GLM_INCLUDE_DIRS}
     ${GLEW_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_LIST_DIR}/external/stb_image
-    ${CMAKE_CURRENT_LIST_DIR}/external/stb_image_write
+    ${CMAKE_CURRENT_LIST_DIR}/external/stb
     ${CMAKE_CURRENT_LIST_DIR}/external/tinyobjloader
     )
 
