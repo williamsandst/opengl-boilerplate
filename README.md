@@ -1,10 +1,13 @@
-# C++ boilerplate code for SDL with OpenGL  
-Easy to use boilerplate code for SDL with OpenGL in C++. Includes some other handy libraries stb_image and tinyobjloader 
-Inbuilt support for two rendering types: ScreenTexture, which is an easy way to just render a bitmap to the screen, and Geometry, which supports 3D models but no texture support.  
+# OpenGL Boilerplate Project using SDL2, written in C++
+Boilerplate example project written to be used as base for future graphical endeavors. Includes the handy libraries stb_image and stb_image_write for any image writing needs, and tinyobjloader to load obj files.  
+Inbuilt support for two rendering types: ScreenTexture, which is an easy way to just render a bitmap to the screen, and Rasterizer, which supports very simple colored 3D models.
   
-# Install instructions  
-1. Clone the repo  
-2. Download the library folder from https://drive.google.com/open?id=1Zx7xBiKXmUmjf2piyGgvKf3MsfMR6BvI
-3. Add the lib folder to the topmost folder of the repo, opengl-boilerplate/  
-4. Add the resources folder to the VS project folder, opengl-boilerplate/src/opengl-boilerplate/  
-4. Once the project has been built, copy the SDL2.dll file from lib/sdl2/lib next to the exe file you are trying to run  
+## Dependencies
+SDL2, GLEW (static)  
+stb_image, stb_write, tinyobjloader (included in external/)
+  
+## Build instructions  
+1. Install the required dependencies: [SDL2 link](https://www.libsdl.org/download-2.0.php), [GLEW link](http://glew.sourceforge.net/)  
+2. Clone the repo  
+3. Target "cmake" at the root to build platform-dependent files  
+4. You can now build/modify the project  
