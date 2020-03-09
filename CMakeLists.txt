@@ -1,10 +1,9 @@
 ###########################################################################
-### Example CMake Setup demonstrating libraries and header-only projects" #
+### Example OpenGL Boilerplate project" #
 ###########################################################################
 # Includes a bunch of macros for improving IDE compatability, mainly focused on Windows Visual Studios"
 # Supports a shaders/ folder in src/ as well as an assets/ folder in the repo, which are both copied/symlinked next to the exe
 # Supports automatic inclusion of dll files next to the exe from dlls/ folder
-# Only tested on Windows 10
 
 ### Settings ###
 # Enables/disables symlinking the assets needed next to the generated exe in the IDE. Should work fine except for in Windows, where it only works with Admin Privilege
@@ -13,7 +12,7 @@ set(USING_SYMLINKS TRUE)
 set(USING_COPY TRUE)
 
 # Project setup
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.10)
 
 project(opengl-boilerplate
     LANGUAGES C CXX
