@@ -38,6 +38,11 @@ void InputHandler::handleInput(float deltaTime)
 				camera.changeMaxVelocity(0.5);
 				std::cout << "Max speed: " << camera.maxVelocity << "\n";
 				break;
+
+			case SDLK_r:
+				std::cout << "Reloading Shaders" << "\n";
+				renderer.requestShaderReload();
+				break;
 			case SDLK_F9:
 				std::cout << "Camera pos: x: " << camera.getPosition().x << " y: " << camera.getPosition().y << " z: " << camera.getPosition().z << "\n";
 				break;

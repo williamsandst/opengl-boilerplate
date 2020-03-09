@@ -20,6 +20,8 @@ class Shader
 public:
 	//Shader ID
 	unsigned int ID;
+	const char* vertexPath;
+	const char* fragmentPath;
 
 	//Constructor loads shader files
 	Shader();
@@ -28,6 +30,10 @@ public:
 
 	//Use the shader
 	void use();
+
+	//Reload the shader
+	void create();
+	void reload();
 
 	//Functions for setting uniforms in the shaders
 	void setInt(std::string name, int value) const;

@@ -7,6 +7,17 @@ Shader::Shader()
 
 Shader::Shader(const char * vertexPath, const char * fragmentPath)
 {
+	this->vertexPath = vertexPath;
+	this->fragmentPath = fragmentPath;
+	create();
+}
+
+Shader::~Shader()
+{
+}
+
+void Shader::create()
+{
 	std::string vertexCode = FileHandler::loadStrFile(vertexPath);
 	std::string fragmentCode = FileHandler::loadStrFile(fragmentPath);
 
@@ -36,8 +47,10 @@ Shader::Shader(const char * vertexPath, const char * fragmentPath)
 	glDeleteShader(fragmentShader);
 }
 
-Shader::~Shader()
+void Shader::reload()
 {
+	glDeleteProgram(ID);
+	create();
 }
 
 void Shader::use()

@@ -50,6 +50,8 @@ public:
 
 	void resizeWindow(int width, int height);
 
+	void requestShaderReload();
+
 private:
     Shader screenTextureShader, geometryShader;
     SDL_Window *window;
