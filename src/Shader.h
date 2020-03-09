@@ -28,12 +28,13 @@ public:
 	Shader(const char* vertexPath, const char* fragmentPath);
 	~Shader();
 
+	//Create the shader
+	void create();
+	//Hot reloading support
+	void reload();
+
 	//Use the shader
 	void use();
-
-	//Reload the shader
-	void create();
-	void reload();
 
 	//Functions for setting uniforms in the shaders
 	void setInt(std::string name, int value) const;
