@@ -107,7 +107,6 @@ void InputHandler::handleInput(float deltaTime)
 			}
 			break;
 		case SDL_WINDOWEVENT:
-			std::cout << "Event: " << sdlEvent.window.event << "\n";
 			switch (sdlEvent.window.event) {
 			case SDL_WINDOWEVENT_RESIZED:
 				renderer.resizeWindow(sdlEvent.window.data1, sdlEvent.window.data2);
